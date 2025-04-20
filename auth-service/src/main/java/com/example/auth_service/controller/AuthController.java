@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/auth")
@@ -15,30 +15,22 @@ import org.springframework.web.client.RestTemplate;
 public class AuthController {
 
     private final AuthService authService;
-    private final RestTemplate restTemplate; // Добавляем RestTemplate для вызова User Service
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
-        authService.register(request);
-        try {
-            // Исправляем URL на имя сервиса в Docker-сети
-            ResponseEntity<String> response = restTemplate.postForEntity(
-                    "http://user-service:8082/users", request, String.class);
-            if (!response.getStatusCode().is2xxSuccessful()) {
-                System.err.println("Failed to sync with User Service: " + response.getStatusCode());
-            } else {
-                System.out.println("User synced with User Service: " + response.getBody());
-            }
-        } catch (Exception e) {
-            System.err.println("Failed to register user in User Service: " + e.getMessage());
-        }
-        return ResponseEntity.ok("User registered!");
+        String token = authService.register(request);
+        return ResponseEntity.ok(token);
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest request) {
         String token = authService.authenticate(request);
         return ResponseEntity.ok(token);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<String> handleResponseStatusException(ResponseStatusException e) {
+        return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

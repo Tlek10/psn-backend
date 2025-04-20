@@ -1,7 +1,9 @@
 package com.example.event_service.dto;
 
 import com.example.event_service.model.Event;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -9,6 +11,8 @@ import java.util.List;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class EventDTO {
     private Long id;
     private String title;
@@ -25,4 +29,6 @@ public class EventDTO {
         this.creator = event.getCreator();
         this.participants = event.getParticipants();
     }
+
+
 }

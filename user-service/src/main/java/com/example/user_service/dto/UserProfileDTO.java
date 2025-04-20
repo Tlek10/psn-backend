@@ -3,6 +3,7 @@ package com.example.user_service.dto;
 import com.example.user_service.model.Pet;
 import com.example.user_service.model.User;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class UserProfileDTO {
     private Long id;
     private String username;
